@@ -1,0 +1,66 @@
+# npm login/npm pull等报错：If you are behind a proxy,please make sure that the'proxy'config is set properly
+
+**问题背景：我准备发布一个 `npm` 包，需要先在终端中登录 `npm`**。
+
+执行 `npm login` 登录，出现下图错误：
+
+![npmLogin](https://i-blog.csdnimg.cn/direct/f25330aeca2549afa238178380f16ac3.png#pic_center)
+
+根据报错信息，NPM 客户端在尝试连接到 `https://registry.npmjs.org/` 时遇到了超时问题，通常是由于网络连接不畅或者代理设置问题。
+
+其中 **"If you are behind a proxy,please make sure that the'proxy'config is set properly"**，可以发现极可能是因为我们电脑使用了科学上网，而 NPM 没有配置正确的 proxy。
+
+1. ##### 在命令行检查 NPM 配置
+
+   如果你已经在 NPM 客户端中设置了代理，可以用以下命令查看当前的代理设置：
+
+   ```bash
+   npm config get proxy
+   
+   npm config get https-proxy
+   ```
+
+   如果有代理配置，这些命令会返回代理服务器地址。如果没有设置，返回的结果将为空（null）。
+
+2. ##### 查看电脑系统的代理设置
+
+   不同操作系统有不同的方法查看系统级代理：
+
+   - **Windows**：
+     1. 打开“设置” > “网络和 Internet” > “代理”。
+     2. 在代理设置页面，你可以看到代理服务器地址和端口。
+   - **MacOS**：
+     1. 打开“系统偏好设置” > “网络”。
+     2. 选择正在使用的网络连接（如 Wi-Fi 或有线），然后点击“高级”。
+     3. 转到“代理”标签页，你可以看到代理服务器的设置。
+   - **Linux**：
+     1. 代理设置通常在网络设置中或通过环境变量（如 `http_proxy` 和 `https_proxy`）配置。
+     2. 如果你使用 GNOME 桌面环境，可以在“设置” > “网络” > “网络代理”中查看。
+
+3. ##### 下面我以 windows 系统为例，对 NPM 客户端配置代理
+
+   当你电脑使用了科学上网，根据上面第 2 步，可以找到我的代理地址、端口
+
+   ![windowsProxy](https://i-blog.csdnimg.cn/direct/1bbb29869dff4b19b907a8d90f39bc0b.png#pic_center)
+
+   假设代理地址为：`100.0.0.1`，端口为：`5000`，我们需要将 NPM 的代理配置成和电脑系统一样，可以通过运行以下命令来配置 NPM 的代理：
+
+   ```bash
+   npm config set proxy http://100.0.0.1:5000
+   
+   npm config set https-proxy http://100.0.0.1:5000
+   ```
+
+   配置完成上述两条命令，我重新执行 `npm login` 就已经没有任何报错，输入 username、password、email成功登录了 NPM。
+
+   > [!TIP]
+   >
+   > NPM 主要通过 HTTPS 访问其官方注册表（如 `https://registry.npmjs.org/`），因此配置 `https-proxy` 更为重要。不过，为了确保完整支持两种协议，通常建议同时设置 `proxy` 和 `https-proxy`
+
+4. ##### 如果不需要代理，可以通过以下命令将代理配置清空
+
+   ```bash
+   npm config delete proxy
+   
+   npm config delete https-proxy
+   ```
