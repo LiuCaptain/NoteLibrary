@@ -1,2 +1,98 @@
 # 解决Git报错Failed to connect to github.com port 443 after 21046 ms Couldn't connect to server
 
+**报错背景：这个 Git 错误其实之前没怎么遇到过，相信大家在家里或者公司通过科学上网就可以正常提交到 Github；最近出现这个错误我记得自配置 NPM 的 proxy 后才发生。而这个错误出现也不稳定，有时候通过科学上网就可以 `git push` 成功，有时候即使重启电脑再开启或者关闭科学上网也会出现 443 错误，总之时好时坏。**
+
+下图的报错，我当时开启了科学上网：
+
+![](G:\PersonProject\NoteLibrary\images\443.png)
+
+上图可以看到，`fatal: unable to access 'https://github.com/...': Failed to connect to github.com port 443` 说明 Git 无法连接到 GitHub 的服务器，常见原因是网络连接问题或防火墙/代理配置。
+
+正常情况下网络连接或防火墙一般不会有问题，那么就剩下 Git 的代理配置了。
+
+1. ##### 在命令行检查 Git 的代理配置
+
+   如果你已经在 Git 客户端中设置了代理，可以用以下命令查看当前的代理设置：
+
+   - 查看某个 Git 仓库代理配置
+
+     ```bash
+     git config --get http.proxy
+     
+     git config --get https.proxy
+     ```
+
+   - 查看 Git 全局代理配置
+
+     ```bash
+     git config --global --get http.proxy
+     
+     git config --global --get https.proxy
+     ```
+
+   如果有代理配置，这些命令会返回代理服务器地址。如果没有设置，则什么都不返回
+
+2. ##### 查看电脑系统的代理设置
+
+   不同操作系统有不同的方法查看系统级代理：
+
+   - **Windows**：
+     1. 打开“设置” > “网络和 Internet” > “代理”。
+     2. 在代理设置页面，你可以看到代理服务器地址和端口。
+   - **MacOS**：
+     1. 打开“系统偏好设置” > “网络”。
+     2. 选择正在使用的网络连接（如 Wi-Fi 或有线），然后点击“高级”。
+     3. 转到“代理”标签页，你可以看到代理服务器的设置。
+   - **Linux**：
+     1. 代理设置通常在网络设置中或通过环境变量（如 `http_proxy` 和 `https_proxy`）配置。
+     2. 如果你使用 GNOME 桌面环境，可以在“设置” > “网络” > “网络代理”中查看。
+
+3. ##### 下面我以 windows 系统为例，对 NPM 客户端配置代理
+
+   当你电脑使用了科学上网，根据上面第 2 步，可以找到我的代理地址、端口
+
+   ![windowsProxy](https://i-blog.csdnimg.cn/direct/1bbb29869dff4b19b907a8d90f39bc0b.png#pic_center)
+
+   假设代理地址为：`100.0.0.1`，端口为：`5000`，我们需要将 Git 的代理配置成和电脑系统一样，可以通过运行以下命令来配置 Git 的代理：
+
+   - 针对某个 Git 仓库配置代理，需要在这个仓库的根目录下执行
+
+     ```bash
+     git config http.proxy http://100.0.0.1:5000
+     
+     git config https.proxy http://100.0.0.1:5000
+     ```
+
+   - Git 全局代理配置
+
+     ``` bash
+     git config --global http.proxy http://100.0.0.1:5000
+     
+     git config --global https.proxy http://100.0.0.1:5000
+     ```
+
+   > [!NOTE]
+   >
+   > - 某个 Git 仓库的代理，如果配置的是 Git 全局代理，则这个配置会在所有仓库中生效。
+   >
+   > - 如果同时配置了某个 Git 仓库的代理和 Git 全局代理，Git 会优先使用当前仓库的代理配置。
+   > - `http.proxy` 用于通过 HTTP 协议连接的请求，如：`http://` 开头的远程仓库地址
+   > - **`https.proxy`** 用于通过 HTTPS 协议连接的请求，常用于 GitHub、GitLab 等提供 HTTPS 的托管平台
+
+4. ##### 如果不需要代理，可以通过以下命令将代理配置取消
+
+   - 取消某个 Git 仓库配置代理，需要在这个仓库的根目录下执行
+
+     ``` bash
+     git config --unset http.proxy
+     
+     git config --unset https.proxy
+     ```
+
+   - 取消 Git 全局代理配置
+
+     ```bash
+     git config --global --unset http.proxy
+     
+     git config --global --unset https.proxy
+     ```
