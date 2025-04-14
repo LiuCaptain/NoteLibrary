@@ -130,7 +130,7 @@
 
       2. Docker 容器实质是复制 Docker 镜像并在镜像最上层加一层 read-write 的层，称之为 **容器层**（container layer）
 
-         ![container](F:\Typora保存的文件\NoteLibrary\images\container.svg)
+         ![](/Users/ethereal/Documents/PersonalProject/NoteLibrary/images/container.svg)
 
 13. ##### 创建一个 Docker 容器
 
@@ -264,6 +264,94 @@
     docker container run -d -p 80:80 --name customName nginx
     ```
 
-    ![](F:\Typora保存的文件\NoteLibrary\images\container-back.svg)
+    ![container-back](/Users/ethereal/Documents/PersonalProject/NoteLibrary/images/container-back.svg)
 
-30. 
+30. ##### 获取镜像的方式
+
+    获取镜像常用的方式有三种，如下图
+
+    <img src="/Users/ethereal/Documents/PersonalProject/NoteLibrary/images/getImage.png" alt="getImage" style="zoom:50%;" />
+
+31. ##### 拉取 docker 镜像的命令
+
+    ```bash
+    docker image pull <IMAGE>:<TAG>
+    ```
+
+    注意：如果没填写 `tag` 则默认拉取的是 `latest` 版本
+
+32. ##### 显示 docker 镜像详细信息的命令
+
+    ```bash
+    docker image inspect <IMAGE>
+    ```
+
+33. ##### 导出 docker 镜像命令
+
+    ```bash
+    docker image save <IMAGE>:<TAG> -o <OutputFileName>
+    ```
+
+34. ##### 导入 docker 镜像命令
+
+    ```bash
+    docker image load -i <ImageFilePath>
+    ```
+
+35. ##### 什么 Dockerfile？
+
+    - Dockerfile 是用于构建 docker 镜像的文件
+    - Dockerfile 里面包含了构建镜像所需的“指令”
+    - Dockerfile 有其特定的语法规则
+
+36. 观看到 3-6
+
+37. 
+
+38. 
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
