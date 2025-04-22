@@ -275,7 +275,7 @@
 31. ##### 拉取 docker 镜像的命令
 
     ```bash
-    docker image pull <IMAGE>:<TAG>
+    docker image pull <ImageName>:<Tag>
     ```
 
     注意：如果没填写 `tag` 则默认拉取的是 `latest` 版本
@@ -289,7 +289,7 @@
 33. ##### 导出 docker 镜像的命令
 
     ```bash
-    docker image save <IMAGE>:<TAG> -o <OutputFileName>
+    docker image save <ImageName>:<Tag> -o <OutputFileName>
     ```
 
 34. ##### 导入 docker 镜像的命令
@@ -307,7 +307,7 @@
 36. ##### 构建 docker 镜像的命令
 
     ```bash
-    docker image build -t <Tag> <DockerFileImage>
+    docker image build -t <Tag> <DockerFilePath>
     ```
 
     其中 TAG 由 **镜像名称** 和 **版本号** 组成，如果省略版本号，则默认为最新版本 `latest`，写法如：`Name:Version`
