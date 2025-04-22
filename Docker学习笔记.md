@@ -286,13 +286,13 @@
     docker image inspect <IMAGE>
     ```
 
-33. ##### 导出 docker 镜像命令
+33. ##### 导出 docker 镜像的命令
 
     ```bash
     docker image save <IMAGE>:<TAG> -o <OutputFileName>
     ```
 
-34. ##### 导入 docker 镜像命令
+34. ##### 导入 docker 镜像的命令
 
     ```bash
     docker image load -i <ImageFilePath>
@@ -304,7 +304,13 @@
     - Dockerfile 里面包含了构建镜像所需的“指令”
     - Dockerfile 有其特定的语法规则
 
-36. 观看到 3-6
+36. ##### 构建 docker 镜像的命令
+
+    ```bash
+    docker image build -t <Tag> <DockerFileImage>
+    ```
+
+    其中 TAG 由 **镜像名称** 和 **版本号** 组成，如果省略版本号，则默认为最新版本 `latest`，写法如：`Name:Version`
 
 37. 
 
