@@ -68,7 +68,7 @@
 
 8. **查看 Docker 所有命令**
 
-   - 执行上面命令会输出所有 Docker 命令；Docker 的基本命令结构是：`docker [操作对象] [操作行为]`
+   - 执行下面命令会输出所有 Docker 命令；Docker 的基本命令结构是：`docker [操作对象] [操作行为]`
 
      ```bash
      docker
@@ -235,7 +235,7 @@
 26. ##### 创建一个交互式运行的 Docker 容器
 
     ```bash
-    docker container run -it <IMAGE> <COMMAND>
+    docker container run -it <IMAGE> <Command>
     ```
 
     当执行 `exit` 命令，这个交互式运行的容器会退出
@@ -243,7 +243,7 @@
 27. ##### 要可交互式的进入正在运行的 Docker 容器
 
     ```bash
-    docker container exec -it <CONTAINER> <COMMAND>
+    docker container exec -it <CONTAINER> <Command>
     ```
 
     当执行 `exit` 命令，这个运行的容器**不会**退出
@@ -289,7 +289,7 @@
 33. ##### 导出 docker 镜像的命令
 
     ```bash
-    docker image save <ImageName>:<Tag> -o <OutputFileName>
+    docker image save <ImageName>:<Tag> -o <OutputImageFileName>
     ```
 
 34. ##### 导入 docker 镜像的命令
@@ -307,10 +307,10 @@
 36. ##### 构建 docker 镜像的命令
 
     ```bash
-    docker image build -t <Tag> <DockerFilePath>
+    docker image build -t <ImageName>:<Tag> <DockerFilePath>
     ```
 
-    其中 TAG 由 **镜像名称** 和 **版本号** 组成，如果省略版本号，则默认为最新版本 `latest`，写法如：`Name:Version`
+    注意：如果省略 `Tag`，则默认为最新版本 `latest`
 
 37. 
 
