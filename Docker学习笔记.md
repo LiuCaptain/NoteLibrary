@@ -312,9 +312,39 @@
 
     注意：如果省略 `Tag`，则默认为最新版本 `latest`
 
-37. 
+37. ##### 根据现有 docker 镜像，生成拥有新的 ImageName 和 Tag 的镜像的命令
 
-38. 
+    ```bash
+    docker image tag <OriginalImageName>:<OriginalTag> <NewImageName>:<NewTag>
+    ```
+
+38. ##### 登录 docker hub 的命令
+
+    ```bash
+    docker login
+    ```
+
+    然后在命令行中输入 Username 和 Password
+
+39. 推送 docker 镜像到 docker hub 的命令
+
+    ```bash
+    docker image push <DockerAccount>/<ImageName>:<Tag>
+    ```
+
+40. 将 docker container 提交成为一个新的 Image 的命令
+
+    ```bash
+    docker container commit <CONTAINER> <NewImageName>:<NewTag>
+    ```
+
+41. 查看镜像的层结构的命令
+
+    ```bash
+    docker image history <ImageName>
+    ```
+
+42. 
 
     
 
