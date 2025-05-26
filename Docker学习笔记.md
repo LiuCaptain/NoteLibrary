@@ -338,13 +338,25 @@
     docker container commit <CONTAINER> <NewImageName>:<NewTag>
     ```
 
-41. 查看镜像的层结构的命令
+41. 查看镜像层结构的命令
 
     ```bash
     docker image history <ImageName>
     ```
 
-42. 
+42. Dockerfile 的语法
+
+    1. 通过 Form 指定基础镜像
+
+       基础镜像选择的基本原则
+
+       - 官方镜像优先于非官方的镜像，如果没有官方镜像，则尽量选择 Dockerfile 开源的镜像
+       - 选择固定版本的 tag 的镜像，而不是每次都使用 latest 版本
+       - 尽量选择体积小的镜像
+
+    2. RUN 用于在 Image 里执行指令，如比安装软件，下载文件等等
+
+43. 请观看 4-3
 
     
 
