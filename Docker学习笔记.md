@@ -307,10 +307,15 @@
 36. ##### 构建 docker 镜像的命令
 
     ```bash
-    docker image build -t <ImageName>:<Tag> <DockerFilePath>
+    docker image build -t <ImageName>:<Tag> -f <DockerFilePath> <构建上下文目录>
     ```
 
-    注意：如果省略 `Tag`，则默认为最新版本 `latest`
+    注意：
+
+    - 如果省略 `Tag`，则默认为最新版本 `latest`
+
+    - `-f` 后面必须跟的是一个 **Dockerfile 文件路径**，**不能是目录（比如 `.`）**
+    - 如果不加 `-f`，则默认就是 `./Dockerfile`
 
 37. ##### 根据现有 docker 镜像，生成拥有新的 ImageName 和 Tag 的镜像的命令
 
@@ -346,7 +351,7 @@
 
 42. Dockerfile 的语法
 
-    1. 通过 Form 指定基础镜像
+    1. 通过 `Form` 指定基础镜像
 
        基础镜像选择的基本原则
 
@@ -354,9 +359,51 @@
        - 选择固定版本的 tag 的镜像，而不是每次都使用 latest 版本
        - 尽量选择体积小的镜像
 
-    2. RUN 用于在 Image 里执行指令，如比安装软件，下载文件等等
+    2. `RUN` 用于在 Image 里执行指令，如比安装软件，下载文件等等(`RUN` 命令中常用来连接命令的符号 “&&\”)
 
-43. 请观看 4-3
+    3. 往镜像里面复制文件有两种命令，分别为 `COPY` 和 `ADD`
+
+       - 复制普通文件
+
+         `COPY` 和 `ADD` 都可以把本地的一个文件复制到镜像里，如果目标目录不存在，则会自动创建
+
+         ```bash
+         FROM python:3.9.5-alpine3.13
+         COPY hello.py /app/hello.py
+         ```
+
+         上面代码，docker 会把本地的 `hello.py` 复制到 `/app` 目录下，如果 `/app` 这个目录不存在 docker 会自动创建
+
+       - 复制压缩文件
+
+         `ADD` 比 `COPY` 高级一点的地方是如果复制的是一个 gzip 等等格式的压缩文件，`ADD` 会自动解压文件
+
+         ```bash
+         FROM python:3.9.5-alpine3.13
+         COPY hello.tar.gz /app/
+         ```
+
+         上面代码，docker 会先将 `hello.tar.gz` 解压，然后将解压后的文件复制到 `/app` 目录中
+
+    4. `WORKDIR` 用来设置 **当前工作目录**，影响后续所有相关指令的相对路径
+
+       在多次使用 `WORKDIR` 中，如果路径不是以 `/` 开头，则相对于上一个 `WORKDIR` 的路径，例如：
+
+       ```bash
+       WORKDIR /usr/src
+       WORKDIR app
+       
+       #这等效于：
+       WORKDIR /usr/src/app
+       ```
+
+       `WORKDIR` 指定的目录如果不存在，docker 会 **自动创建** 这个目录
+
+    5. 
+
+    6. 
+
+43. 请观看 4-5
 
     
 
