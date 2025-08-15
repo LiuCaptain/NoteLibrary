@@ -14,7 +14,7 @@
 
    例如：一个字节的数据：十六进制 0x61 = 二进制 01100001 = 共 8 位
 
-4. uint 和 int
+4. #### uint 和 int
 
    1. `uint`
 
@@ -54,27 +54,27 @@
       > | `11111111` | **255** | 第 256 个组合 |
       >
       > 这 256 种组合，正好能表示从 `0` 到 `255`，总共 256 个数。
-   
+
    2. `int`
-   
+
       - `int` 是 **有符号整数（signed integer）**的缩写，它既可以表示正数，也可以表示负数
-   
+
       - `int` 本质上等同于 `int256`，即占用 256 位（32 字节）的有符号整数，取值范围是 -2的255次方 ~ 2的255次方减1
-   
+
       - `int` 使用的是 **补码（two's complement）** 表示方式
-   
+
       - 数据范围是对称的，但负数比正数多一个，因为要包含 **0**
-   
+
       - Solidity 允许声明不同位数长度的有符号整数，分别是 `int8, int16, int24, ..., int256`，步长是 8 位
-   
+
         1. `int8`：8 位有符号整数，范围 -128~127
         2. `int16`：16 位有符号整数，范围 -2的15次方 ~ 2的15次方减1
         3. `int24`：24 位有符号整数，范围 -2的23次方 ~ 2的23次方减1
         4. ...
         5. `int256`：256 位有无符号整数，范围 -2的255次方 ~ 2的255次方减1
-   
+
         共计 **32 种**
-   
+
       > 1. ##### 为什么 `int8` 是 -128 到 127？
       >
       >    我们来一步一步拆解：
@@ -114,5 +114,149 @@
       >
       > - 运算更快（加减统一用加法电路）
       > - 比较大小、加减法操作更简单高效
+
+5. #### 智能合约的基本结构
+
+   ```solidity
+   contract ContractStructure {
+   	// 成员变量，又叫状态变量
+   	uint256 public balance;
    
-5. 
+     // 构造函数，构造函数当合约在区块链上被部署的时候执行；constructor 与普通成员函数不一样，它的可见性说明符默认为：public
+     constructor (uint256 initBalance) {
+     	balance = initBalance;
+     }
+   
+   	 // 事件
+     event balanceLog (uint256 oldBalance, uint256 increment);
+     
+   	// 修饰器，修饰器是对函数的输入或者输出进行条件约束
+     modifier incrementLimit (uint256 increment) {
+       require(increment > 500, "The increment must be greater than or equal to 500");
+       _; // 执行被修饰函数的函数体
+     }
+   
+   	// 成员函数，其中的 public 用来定义函数的可见性
+     function addBalance (uint256 increment) public incrementLimit(increment) { 
+       emit balanceLog(balance, increment);
+       balance += increment;
+     }
+     
+     // 成员函数，其中的 view 用来说明函数是读操作，而后的 uint256 定义返回值的数据类型，返回值是可以有多个的
+     function getBalance () public view returns (uint256) {
+       return balance;
+     }
+   }
+   ```
+
+6. #### 智能合约的部署其实是要在区块链执行一个交易，这个交易带着合约的代码发送给区块链，而后区块链来处理这个交易，在链上产生一个新的合约实例，部署合约需要耗费资源，耗费资源意味着需要花钱，在以太坊上则花费以太币；合约实例拥有一个地址，称为合约地址（一串十六进制字符串）。  
+
+7. #### 成员变量
+
+   1. 成员变量是存储合约状态的变量，声明方法：`类型 [修饰符] 变量名称`
+   2. 成员变量的**可见性说明符**（默认值：`internal`）
+
+   - public：合约外部、本合约、子合约可见
+   - private：本合约可见
+   - internal：本合约、子合约可见
+
+8. #### 成员函数（TODO：returns(param)）
+
+   1. 成员函数的声明方法：`function fName([param1, param2, ...]) [可见性] [交易相关] [...] [retruns([param]) {}]`
+
+   2. 成员函数的结构分解：
+
+      - 函数签名：`fName([param1,param2,...])`
+      - 返回值：`retruns([param])`
+      - 修饰符：`[可见性] [交易相关] [...]`
+
+   3. 成员函数的**可见性说明符**（默认值：无默认值，必须显示定义）
+
+      - public：合约外部、本合约、子合约可见
+      - private：本合约可见
+      - internal：本合约、子合约可见
+      - external：仅合约外部
+
+   4. 成员函数的**状态可变性说明符**(交易相关)
+
+      - 无描述符（默认）：可以读、写区块链状态*（它会引发向区块链发送一个交易，而后区块链来处理这个交易；gas 消耗较高）*
+
+      - view：只读，不能修改状态
+
+      - pure：纯函数，既不读取也不修改状态
+
+      - payable：允许接收 ETH
+
+9. #### ABI 信息描述合约的外部行为，而不是描述合约的内部实现
+
+10. #### 数据类型
+
+    - **值类型（Value Types）**
+
+      存储的是**值本身**，赋值或传参时会**拷贝一份**，互不影响。
+
+      主要包括：
+
+      1. 布尔类型（`bool`）
+
+         - 取值：`true` / `false`
+
+      2. 整数类型
+
+         - **无符号整数**（`uint` / `uint8` ~ `uint256`，步长 8）
+         - **有符号整数**（`int` / `int8` ~ `int256`，步长 8）
+
+      3. 定长字节数组
+
+         - `bytes1` ~ `bytes32`（定长，按字节存储）
+
+      4. 枚举类型（`enum`）
+
+         - 用来定义一组常量值，例如：
+
+           ```solidity
+           enum Status { Pending, Shipped, Delivered }
+           ```
+
+      5. 地址类型
+
+         - `address`：固定占用 20 字节，储存以太坊地址
+         - `address payable`：固定占用 20 字节，可接收 ETH，有`.transfer()`/`.send()`/`.call{value:...}()`方法
+
+    - **引用类型**（Reference Types）
+
+      存储的是**数据位置的引用**，赋值或传参时指向同一份数据，修改会互相影响。在 Solidity 中，这类变量必须指定存储位置（`storage`/`memory`/`calldata`）。
+
+      主要包括：
+
+      1. 动态字节数组与动态长度字符串
+
+         - **动态字节数组**：`bytes`（长度可变，按字节存储）
+         - **动态长度字符串**：`string`（UTF-8 编码的动态字节序列）
+
+      2. 数组
+
+         - 定长数组（如 `uint[5] arr`）
+
+         - 动态数组（如 `uint[] arr`）
+
+      3. 结构体（`struct`）
+
+         - 自定义的复合数据类型，例如：
+
+           ```solidity
+           struct Person {
+             string name;
+             uint age;
+           }
+           ```
+
+      4. 映射（`mapping`）
+
+         - 类似哈希表（Key → Value），例如：
+
+           ```solidity
+           mapping(address => uint) balances;
+           ```
+
+           
