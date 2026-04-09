@@ -250,23 +250,32 @@
              uint age;
            }
            ```
+           
+           > `Struct` 不能“直接递归包含自身”（值递归），但允许通过 array / mapping 实现递归（引用递归）
 
       4. 映射（`mapping`）
 
          - 类似哈希表（Key → Value），例如：
-
+      
            ```solidity
            mapping(address => uint) balances;
            ```
+           
+           > - `mapping` 类型只能存在于 `storage` 中，不能存在于 `memory` 或 `calldata`
+           > - `mapping` 的 `key` 必须是值类型（value type），不能是引用类型（reference type）
+           > - `mapping` 不能作为 `public`、`external` 函数的参数，但可以作为 `internal`、`private`、`library` 函数的 `storage` 参数
+           > - `mapping` 不能作为任何函数的返回值
+           > - `mapping` 不能作为数组成员
+           > - `mapping` 不能被遍历，因此也不支持拷贝
 
-11. Address 账户地址
+11. #### Address 账户地址
 
     账户地址分为外部账户和内部账户，都是20字节长度，address payable 与 address 之间可以进行显式互相转换
 
     - 外部账户指的是资产持有人的钱包地址
     - 内部账户指的是合约部署后形成的地址
 
-12. Contract 合约类型
+12. #### Contract 合约类型
 
     - 合约可以隐式转换为它的父合约，父合约需要显式转换为它的子合约 
     - Contract 与 Address 之间可以进行显式互相转换
@@ -274,4 +283,54 @@
     - 可以从合约变量（合约实例）调用合约函数
     - 合约可以使用 new 操作符部署另一合约
 
-13. 
+13. #### 所有引用类型（reference types）的局部 `storage` 变量，都必须绑定到已有的 storage 数据
+
+14. #### 引用类型的拷贝
+
+    1. 判定算法：
+
+       > [!NOTE]
+       >
+       > - 合约的成员变量中引用类型的特殊性
+       >
+       >   与一般虚拟机或物理机不同的是,EVM 的机器模型中引入了 `storage`,合约成员变量指向固定的持久化(storage)数据块,它并不能像一般引用类型变量一样切换它所指向的数据块,由于这个限制,对成员变量的赋值,引用拷贝从技术上变成不可能。
+       >
+       > - Location 对数据空间的分割
+       >
+       >   数据块有三个储存位置（storage、memory、calldata），概念上储存空间被分割成三个子空间，引用类型变量被 location 属性限定，不可能跨越子空间进行指向切换，只能在子空间内部切换。
+
+       一个赋值操作：
+
+       ```solidity
+       x = a;
+       ```
+
+       其中 x 是被赋值的变量，在赋值操作符的左侧，a 是赋值变量，在赋值操作符的右侧。
+
+       如果 x 是成员变量（意味着 x 会指向一个数据块，这种指向关系不会发生改变），则是值拷贝；如果 x 是局部变量，x 与 a 的 location 相同，则是引用拷贝，如果 x 与 a 的 location 不相同，则是值拷贝。
+
+    2. 检查算法：
+
+       > [!NOTE]
+       >
+       > - `calldata` 是只读的，它是 `message` 的数据字段
+
+       判定算法有三个输出：引用拷贝、值拷贝。如果输出引用拷贝则不必检查；如果输出值拷贝则执行检查算法：
+
+       - 检查 x 和 a 的类型中是否有 mapping 元素（本身是 mapping 或者嵌入了 mapping 成分），如果有则报错
+       - 检查 x 是否是 calldata，如果是则报错
+       - 执行值拷贝
+
+       
+
+    3. 
+
+    
+
+15. 
+
+16. 
+
+    
+
+    
