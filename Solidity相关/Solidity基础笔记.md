@@ -324,25 +324,26 @@
 15. #### 合约之间的函数调用
 
     - EOA（Externally Owned Account）指外部账户，本质上是以太坊网络上的一种账户，由使用私钥的人控制。换句话说，它是您用于发送交易或管理以太币 (ETH) 的账户。与仅由代码控制的智能合约账户不同，外部拥有者账户由人员直接管理
-    - 合约的调用最终是由 EOA 发起的
-    - 合约间的调用使得一次完整的调用成为一个调用链条
+    - 合约的调用最初是由 EOA 发起的
     - EOA 使用的 ABI 数据与合约间调用时调用者持有的接口是等价的，都是对合约函数签名的完整描述
     - Solidity 不要求被调用的合约语法上必须实现一个接口(is 关键字)
-    - 
 
-16. #### 合约间的调用链
+16. #### 合约的调用链
 
     ![contractCallChain](/Users/ethereal/Documents/PersonalProject/NoteLibrary/images/contractCallChain.svg)
 
     ![eoa-contractA-contractB](/Users/ethereal/Documents/PersonalProject/NoteLibrary/images/eoa-contractA-contractB.png)
 
-    calldata 的本质是 EVM 调用函数时输入的数据载体
+    `calldata` 的本质是 EVM 调用函数时输入的数据载体
 
-    ```bash
+    - 对于 EOA 调用合约，calldata 存在于 transaction 中的 data，可以通过 `msg.data` 读取
+    - 对于合约调用合约，calldata 存在于 EVM 内部 `message call`，可以通过 `msg.data` 读取
+
+    ```solidity
     calldata = 函数选择器（前 4 字节）+ 参数编码（按 ABI 规则）
     ```
 
-    参数的编码是完整的 ABI 编码，函数的编码是：**函数签名 -> keccak256 -> 取前 4 字节**
+    **参数的编码**是完整的 ABI 编码，**函数的编码**是：**函数签名 -> keccak256 -> 取前 4 字节**
 
     ```solidity
     // 函数签名
@@ -352,20 +353,58 @@
     keccak256("transfer(address, uint256)") // 0xa9059cbb...
     
     // 取前 4 字节
-    0xa9059cbb // 这个就是函数的编码结果（函数选择器）
+    0xa9059cbb // 这个就是函数的编码结果（函数选择器）,可以通过 msg.sig 获取函数选择器
+    ```
+
+     
+
+    手动构造 `calldata`（主要用于 call 方法使用）：
+
+    ```solidity
+    bytes memory data = abi.encodeWithSignature(
+    	"transfer(address, uint256)", // 函数签名
+    	0x000000..., // 参数1
+    	1000 // 参数2
+    )
     ```
 
     
 
-    - 对于 EOA 调用合约，calldata 存在于 transaction 中的 data
-    - 对于合约调用合约，calldata 存在于 EVM 内部 `message call`
+    一些全局变量的使用
+
+    ```solidity
+    block.timestamp // 获取当前区块的时间戳（Unix 秒）
+    
+    tx.origin // 获取最初发起这笔 transaction 的 EOA 地址
+    
+    msg.sender // 获取谁调用了当前合约
+    msg.sig // 获取函数选择器
+    msg.data // 获取 calldata
+    msg.value // 获取转账金额，单位为 wei，1ETH = 10¹⁸wei
+    ```
 
     > 1. 在以太坊中，函数调用（无论来自 EOA 还是合约的调用）会构造一段 calldata（原始字节数据），通常按照 ABI 规范组织（函数选择器 + 参数编码），并通过 transaction 或 message call 传递给目标合约，在合约内部通过 msg.data 被解析执行。
     > 2. ABI 不是数据类型，而是一套编码/解码规则；calldata 不是 ABI，本质只是 bytes，只是通常“按 ABI 规则组织”。
 
-17. 
+17. #### 函数可见性为 External 的理解
 
-18. 
+    - 可见性为 External 的函数应该只被外部函数调用
+
+    - External 的函数虽然可以被合约内部调用，但是采用外部调用的机制，会产生新的 message，耗费的资源也会增多
+
+18. #### Call 的使用语法
+
+    ```solidity
+    (bool status, bytes data) = <address>.call(bytes <calldata>)
+    ```
+
+    请务必判断 `call` 调用后返回的 `status`，并进行相应逻辑处理，否则会造成严重问题
+
+19. 
+
+20. 
+
+21. 
 
     
 
