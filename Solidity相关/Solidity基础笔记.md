@@ -362,7 +362,7 @@
 
     ```solidity
     bytes memory data = abi.encodeWithSignature(
-    	"transfer(address, uint256)", // 函数签名
+    	"transfer(address,uint256)", // 函数签名(不能有空格、去掉参数名称只保留参数类型)
     	0x000000..., // 参数1
     	1000 // 参数2
     )
@@ -395,10 +395,12 @@
 18. #### Call 的使用语法
 
     ```solidity
-    (bool status, bytes data) = <address>.call(bytes <calldata>)
+    (bool status, bytes <location> data) = <address>.call(bytes <calldata>)
     ```
 
-    请务必判断 `call` 调用后返回的 `status`，并进行相应逻辑处理，否则会造成严重问题
+    请务必判断 `call` 调用后返回的 `status`，并进行相应逻辑处理，否则会造成严重问题。
+
+    这里的 data 是经过编码后的动态字节数组，需要使用 `abi.decode(bytes)` 进行解码。
 
 19. 
 
