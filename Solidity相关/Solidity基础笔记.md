@@ -402,11 +402,45 @@
 
     这里的 data 是经过编码后的动态字节数组，需要使用 `abi.decode(bytes)` 进行解码。
 
-19. 
+19. 合约中的 gas、gas fee、gas price 的区别
 
-20. 
+    - gas 是完全由执行逻辑决定的，一个逻辑没有变化的合约函数执行，gas 没有变化
+    - gas price 由市场定价，可以由交易发起者在 transaction 中设定
+    - gas fee = gas * gas price
 
-21. 
+20. #### Gaslimit 与 Gasleft() 函数
+
+    Gaslimit：
+
+    - 交易的发起者可以设定 gaslimit
+    - 合约之间的调用，调用者可以设定 gaslimit
+    - 区块本身设定了一个 gaslimit
+
+    Gasleft 是由以上三个 gaslimit 作为限定，与当前 gas 的消耗一起计算的结果，可以理解为：
+    $$
+    gasleft() = gaslimit - gas
+    $$
+
+21. #### Gas 退款规则
+
+    - 交易进行中 gas 被消耗完后，交易会被终止执行
+    - 交易完成时，没有被消耗的 gas 会被退回
+
+    - 交易失败时，已经被消耗的 gas 不会被退回
+
+22. 
+
+23. 
+
+24. 
+
+25. 
+
+26. 
+
+27. 
+
+28. 
 
     
 
