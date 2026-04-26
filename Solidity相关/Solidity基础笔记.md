@@ -258,15 +258,80 @@
          - 类似哈希表（Key → Value），例如：
       
            ```solidity
-           mapping(address => uint) balances;
+           mapping(address => uint256) balances;
            ```
+      
+         - `mapping` 的本质不是数据结构，而是一个如何在 `storage` 里定位数据的规则，`mapping` 计算 `storage` 位置的公式：
+      
+           ```solidity
+           keccak256(abi.encode(key, slot))
+           ```
+      
+           当我们访问一个 `mapping`：
+      
+           ```solidity
+           contract Test {
+           	uint256 a; // slot 0
+           	mapping(address => uint256) balance; // slot 1；mapping 不直接占用数据空间，所以 slot 1 不储存数据
+           	
+           	function getBalance (address addr) public returns(uint256) {
+           		// 访问 mapping 时，实际定位的储存位置是：keccak256(abi.encode(addr, 1))
+           		uint256 currentBalance = balance[addr];
+           		
+           		return currentBalance;
+           	}
+           }
+           ```
+      
+           如果是访问嵌套 `mapping`:
+      
+           ```solidity
+           contract Test {
+           	mapping(address => mapping(uint256 => uint256)) data; // slot 0
+           	
+           	function getFraction (address addr, uint256 id) public returns (uint256) {
+           		uint256 currentFraction = data[addr][id];
+           	}
+           }
+           ```
+      
+           实际定位的储存位置计算方法：
+      
+           第一步：
+      
+           ```solidity
+           InnerSlot = keccak256(abi.encode(addr, 0))
+           ```
+      
+           第二步：
+      
+           ```solidity
+           FinalSlot = keccak256(abi.encode(id, InnerSlot))
+           ```
+      
+         - 如何用 `string` 当 key？
+      
+           ```solidity
+           mapping(bytes32 => uint256) m
            
-           > - `mapping` 类型只能存在于 `storage` 中，不能存在于 `memory` 或 `calldata`
-           > - `mapping` 的 `key` 必须是值类型（value type），不能是引用类型（reference type）
-           > - `mapping` 不能作为 `public`、`external` 函数的参数，但可以作为 `internal`、`private`、`library` 函数的 `storage` 参数
-           > - `mapping` 不能作为任何函数的返回值
-           > - `mapping` 不能作为数组成员
-           > - `mapping` 不能被遍历，因此也不支持拷贝
+           // 设置
+           function set(string memory key, uint256 value) public {
+               bytes32 k = keccak256(abi.encodePacked(key));
+               m[k] = value;
+           }
+           
+           // 读取
+           function get(string memory key) public view returns (uint256) {
+               return m[keccak256(abi.encodePacked(key))];
+           }
+           ```
+      
+         > - `mapping` 类型只能存在于 `storage` 中，不能存在于 `memory` 或 `calldata`
+         > - `mapping` 的 `key` 必须是值类型（value type），不能是引用类型（reference type）
+         > - `mapping` 不能作为 `public`、`external` 函数的参数，但可以作为 `internal`、`private`、`library` 函数的 `storage` 参数
+         > - `mapping` 不能作为任何函数的返回值
+         > - `mapping` 不能作为数组成员
+         > - `mapping` 不能被遍历，因此也不支持拷贝
 
 11. #### Address 账户地址
 
