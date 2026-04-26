@@ -467,7 +467,7 @@
 
     这里的 data 是经过编码后的动态字节数组，需要使用 `abi.decode(bytes)` 进行解码。
 
-19. 合约中的 gas、gas fee、gas price 的区别
+19. #### 合约中的 gas、gas fee、gas price 的区别
 
     - gas 是完全由执行逻辑决定的，一个逻辑没有变化的合约函数执行，gas 没有变化
     - gas price 由市场定价，可以由交易发起者在 transaction 中设定
@@ -493,9 +493,13 @@
 
     - 交易失败时，已经被消耗的 gas 不会被退回
 
-22. 
+22. #### 转账
 
-23. 
+    - send 和 transfer 是旧的转账设计，它们可以理解为 gaslimit 为 2300 的 calldata 为空的 call，区别在于 transfer 处理了 call 的返回值
+
+    - 新的转账设计没有专门的转账函数，而是普通函数调用的伴生物
+
+23. #### 
 
 24. 
 
