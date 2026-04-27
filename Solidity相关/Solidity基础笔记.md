@@ -499,7 +499,31 @@
 
     - 新的转账设计没有专门的转账函数，而是普通函数调用的伴生物
 
-23. #### 
+23. send 和 transfer 函数的底层实现
+
+    - send 函数的实现：
+
+      ```solidity
+      function send (address addr, uint256 amount) public returns (bool) {
+      	(bool status, bytes memory data) = addr.call{gas: 2300, value: amount}("");
+      	return status;
+      }
+      ```
+
+    - transfer 函数的实现：
+
+      ```solidity
+      function transfer (address addr, uint256 amount) public {
+      	(bool status, bytes memory data) = addr.call{gas: 2300, value: amount}("");
+      	require(status, "Call failed!");
+      }
+      ```
+
+      
+
+    
+
+    
 
 24. 
 
@@ -508,8 +532,6 @@
 26. 
 
 27. 
-
-28. 
 
     
 
