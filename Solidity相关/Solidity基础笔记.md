@@ -337,7 +337,7 @@
 
 11. #### Address 账户地址
 
-    账户地址分为外部账户和内部账户，都是20字节长度，address payable 与 address 之间可以进行显式互相转换
+    账户地址分为外部账户和内部账户，都是20字节长度，`address payable` 与 `address` 之间可以进行显式互相转换
 
     - 外部账户指的是资产持有人的钱包地址
     - 内部账户指的是合约部署后形成的地址
@@ -364,7 +364,7 @@
        >
        > - Location 对数据空间的分割
        >
-       >   数据块有三个储存位置（storage、memory、calldata），概念上储存空间被分割成三个子空间，引用类型变量被 location 属性限定，不可能跨越子空间进行指向切换，只能在子空间内部切换。
+       >   数据块有三个储存位置（`storage`、`memory`、`calldata`），概念上储存空间被分割成三个子空间，引用类型变量被 location 属性限定，不可能跨越子空间进行指向切换，只能在子空间内部切换。
 
        一个赋值操作：
 
@@ -384,8 +384,8 @@
 
        判定算法有三个输出：引用拷贝、值拷贝。如果输出引用拷贝则不必检查；如果输出值拷贝则执行检查算法：
 
-       - 检查 x 和 a 的类型中是否有 mapping 元素（本身是 mapping 或者嵌入了 mapping 成分），如果有则报错
-       - 检查 x 是否是 calldata，如果是则报错
+       - 检查 x 和 a 的类型中是否有 `mapping` 元素（本身是 mapping 或者嵌入了 mapping 成分），如果有则报错
+       - 检查 x 是否是 `calldata`，如果是则报错
        - 执行值拷贝
 
 15. #### 合约之间的函数调用
@@ -403,8 +403,8 @@
 
     `calldata` 的本质是 EVM 调用函数时输入的数据载体
 
-    - 对于 EOA 调用合约，calldata 存在于 transaction 中的 data，可以通过 `msg.data` 读取
-    - 对于合约调用合约，calldata 存在于 EVM 内部 `message call`，可以通过 `msg.data` 读取
+    - 对于 EOA 调用合约，`calldata` 存在于 transaction 中的 data，可以通过 `msg.data` 读取
+    - 对于合约调用合约，`calldata` 存在于 EVM 内部 `message call`，可以通过 `msg.data` 读取
 
     ```solidity
     calldata = 函数选择器（前 4 字节）+ 参数编码（按 ABI 规则）
@@ -455,7 +455,7 @@
 
 17. #### 函数可见性为 External 的理解
 
-    - 可见性为 External 的函数应该只被外部函数调用
+    - 可见性为 `external` 的函数应该只被外部函数调用
 
     - External 的函数虽然可以被合约内部调用，但是采用外部调用的机制，会产生新的 message，耗费的资源也会增多
 
@@ -479,11 +479,11 @@
 
     Gaslimit：
 
-    - 交易的发起者可以设定 gaslimit
-    - 合约之间的调用，调用者可以设定 gaslimit
-    - 区块本身设定了一个 gaslimit
+    - 交易的发起者可以设定 `gaslimit`
+    - 合约之间的调用，调用者可以设定 `gaslimit`
+    - 区块本身设定了一个 `gaslimit`
 
-    Gasleft 是由以上三个 gaslimit 作为限定，与当前 gas 的消耗一起计算的结果，可以理解为：
+    Gasleft 是由以上三个 `gaslimit` 作为限定，与当前 gas 的消耗一起计算的结果，可以理解为：
     $$
     gasleft() = gaslimit - gas
     $$
@@ -497,7 +497,7 @@
 
 22. #### 转账
 
-    - send 和 transfer 是旧的转账设计，它们可以理解为 gaslimit 为 2300 的 calldata 为空的 call，区别在于 transfer 处理了 call 的返回值
+    - `send` 和 `transfer` 是旧的转账设计，它们可以理解为 `gaslimit` 为 2300 的 `calldata` 为空的 `call`，区别在于 `transfer` 处理了 `call` 的返回值
 
     - 新的转账设计没有专门的转账函数，而是普通函数调用的伴生物
 
@@ -530,7 +530,7 @@
 
     - 值类型的存储规则：
 
-      1. storage 以 32 字节（slot）为最小单位进行存储，小于 32 字节的**值类型**会按声明顺序进行**紧凑打包（packing）**
+      1. `storage` 以 32 字节（slot）为最小单位进行存储，小于 32 字节的**值类型**会按声明顺序进行**紧凑打包（packing）**
 
       2. **值类型**按顺序尝试放入当前 slot，如果剩余空间不足或不满足对齐规则，则会使用新的 slot
 
