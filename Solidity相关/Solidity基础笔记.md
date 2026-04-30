@@ -453,16 +453,16 @@
     > 1. 在以太坊中，函数调用（无论来自 EOA 还是合约的调用）会构造一段 calldata（原始字节数据），通常按照 ABI 规范组织（函数选择器 + 参数编码），并通过 transaction 或 message call 传递给目标合约，在合约内部通过 msg.data 被解析执行。
     > 2. ABI 不是数据类型，而是一套编码/解码规则；calldata 不是 ABI，本质只是 bytes，只是通常“按 ABI 规则组织”。
 
-17. #### 函数可见性为 External 的理解
+17. #### 函数可见性为 external 的理解
 
     - 可见性为 `external` 的函数应该只被外部函数调用
 
-    - External 的函数虽然可以被合约内部调用，但是采用外部调用的机制，会产生新的 message，耗费的资源也会增多
+    - `external` 的函数虽然可以被合约内部调用，但是采用外部调用的机制，会产生新的 `message`，耗费的资源也会增多
 
 18. #### Call 的使用语法
 
     ```solidity
-    (bool status, bytes <location> data) = <address>.call(bytes <calldata>)
+    (bool status, bytes memory data) = <address>.call(bytes <calldata>)
     ```
 
     请务必判断 `call` 调用后返回的 `status`，并进行相应逻辑处理，否则会造成严重问题。
@@ -548,11 +548,19 @@
 
     > 真正的 packing 边界类型：`struct`、`mapping`、`动态数组`
 
-26. #### delegatecall
+26. #### delegatecall 的使用语法
 
-    
+    ```solidity
+    (bool status, bytes memory data) = <address>.delegatecall(bytes <calldata>)
+    ```
 
-27. 
+    - `delegatecall` 用于执行其他合约的代码，但使用当前合约的储存（`storage`）
+
+    - `delegatecall` 是一种 `message call`（EVM **调用类型**之一），但它不会创建新的调用上下文，而是复用当前上下文
+
+    - `delegatecall` 的调用选项不能设置 `value`，但可以设置 `gas`
+
+27. #### 代理模式
 
 28. 
 
